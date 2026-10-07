@@ -8,6 +8,7 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 
 - Responsive, mobile-first design with a collapsible navigation menu
 - Sections: Products, Why Us, How It Works, Credentials, FAQ, Request a Quote
+- Product catalogue with category filters, plus an order cart (add, change quantity, remove, remove all, add your own items) that places orders via WhatsApp or email
 - Quotation request form that sends via **email** or **WhatsApp** (opens the user's own app so they can review before sending)
 - Floating WhatsApp chat button
 - SEO-ready: meta description, Open Graph tags and Schema.org `Organization` structured data
@@ -18,7 +19,15 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 
 ```
 .
-├── index.html   # the entire website (HTML, CSS and JavaScript)
+├── index.html       # the whole website (HTML, CSS, JavaScript)
+├── logo.svg         # main logo, colour, for white backgrounds
+├── logo-white.svg   # logo for dark backgrounds
+├── logo-square.svg  # square version for profile pictures
+├── logo-mark.svg    # "LX" icon, used as the browser icon
+├── logo.png         # 512px square logo (app icon / profile picture)
+├── og.png           # 1200x630 image shown when the link is shared
+├── robots.txt
+├── sitemap.xml
 └── README.md
 ```
 
@@ -43,6 +52,8 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 - **Contact details:** search `index.html` for the phone number and email and update them (they appear in the page, the quote form scripts and the structured data).
 - **Colours:** edit the CSS variables at the top of the `<style>` block (`--navy`, `--teal`, `--gold`, etc.).
 - **Products / FAQ:** edit the matching `<section>` blocks in the HTML.
+- **Catalogue items:** edit the `CAT` list near the bottom of `index.html` (one line per category).
+- **Custom domain:** if you add one, update the web address in `index.html` (canonical, `og:` tags), `robots.txt` and `sitemap.xml`.
 
 ## Contact
 
