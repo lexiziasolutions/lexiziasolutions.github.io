@@ -26,6 +26,9 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 ├── logo-mark.svg    # "LX" icon, used as the browser icon
 ├── logo.png         # 512px square logo (app icon / profile picture)
 ├── og.png           # 1200x630 image shown when the link is shared
+├── admin.html       # admin login: orders + catalogue manager (not linked in the menu)
+├── config.js        # Supabase URL + public anon key
+├── setup.sql        # run once in Supabase to create tables and security rules
 ├── robots.txt
 ├── sitemap.xml
 └── README.md
@@ -67,3 +70,15 @@ Company No. PVT-DM1KB2V5 · Registered under the Companies Act, 2015
 ## License
 
 © Lexizia Solutions Ltd. All rights reserved.
+
+## Admin area (orders and catalogue)
+
+The site is static, so logins and data live in a free [Supabase](https://supabase.com) project.
+
+1. Create a Supabase project, then open **SQL Editor**, paste `setup.sql` (change the admin email in it) and run it.
+2. **Authentication → Users → Add user**: create the admin with that same email and a strong password (tick *Auto Confirm User*).
+3. **Authentication → Sign In / Providers**: turn **off** "Allow new users to sign up".
+4. **Project Settings → API**: copy the *Project URL* and the **anon public** key into `config.js`. Never use the `service_role` key.
+5. Commit `config.js`, then open `/admin.html` on your site and log in.
+
+Without Supabase the website still works; orders just go by WhatsApp or email.

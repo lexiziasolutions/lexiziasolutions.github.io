@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0a1f3d">
+<title>Admin | Lexizia Solutions Ltd</title>
+<link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<style>
+  :root{--navy:#0a1f3d;--teal:#0f9d8a;--gold:#f2b33d;--ink:#122033;--muted:#58657a;--bg:#f5f7fb;--line:#e2e8f1;--red:#c0392b}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:env(safe-area-inset-bottom,0px)}
+  [hidden]{display:none!important}
+  header{background:var(--navy);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:5}
+  header b{font-size:1.05rem}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+  input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;font:inherit;font-size:16px;background:#fff}
+  label{display:block;font-weight:600;font-size:.88rem;margin:10px 0 4px;color:var(--navy)}
+  button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+  .b1{background:var(--teal);color:#fff}.b2{background:var(--gold);color:var(--navy)}.b3{background:#eef2f8;color:var(--navy)}.bd{background:#fdecea;color:var(--red)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .tabs{display:flex;gap:8px;margin-bottom:14px}
+  .tab{background:#fff;border:1.5px solid var(--line);color:var(--navy)}
+  .tab[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .msg{padding:10px 12px;border-radius:10px;font-size:.92rem;margin-top:10px}
+  .err{background:#fdecea;color:var(--red)}.ok{background:#e9f8f4;color:var(--navy)}
+  .badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;background:#eef2f8;color:var(--navy)}
+  .badge.order{background:#d9f3ee}.badge.quote{background:#fdf0d2}
+  .meta{color:var(--muted);font-size:.88rem}
+  .items{margin:8px 0;padding-left:18px}
+  .grid{display:grid;grid-template-columns:1fr 110px;gap:8px}
+  .prow{display:grid;grid-template-columns:1fr 100px;gap:8px;margin-bottom:6px}
+  .prow .row{grid-column:1/-1}
+  h2{color:var(--navy);margin:18px 0 8px;font-size:1.05rem}
+  .login{max-width:380px;margin:12vh auto 0}
+</style>
+</head>
+<body>
+<header><b>Lexizia Admin</b><button class="b3" id="out" hidden>Log out</button></header>
+<div class="wrap">
+
+  <div id="setup" class="card" hidden>
+    <b>Not connected yet.</b>
+    <p class="meta" style="margin-top:6px">Open <code>config.js</code> and paste your Supabase project URL and anon key, then reload this page.</p>
+  </div>
+
+  <div id="login" class="card login" hidden>
+    <h2 style="margin-top:0">Admin login</h2>
+    <label for="em">Email</label><input id="em" type="email" autocomplete="username">
+    <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+    <div class="row" style="margin-top:14px"><button class="b1" id="go">Log in</button></div>
+    <div id="lerr" class="msg err" hidden></div>
+  </div>
+
+  <div id="app" hidden>
+    <div class="tabs">
+      <button class="tab" id="t1" aria-pressed="true">Orders <span id="newn"></span></button>
+      <button class="tab" id="t2" aria-pressed="false">Catalogue</button>
+    </div>
+
+    <div id="p1">
+      <div class="row" style="margin-bottom:12px">
+        <select id="flt" style="width:auto"><option value="">All statuses</option><option>new</option><option>contacted</option><option>quoted</option><option>delivered</option><option>cancelled</option></select>
+        <button class="b3" id="ref">Refresh</button>
+      </div>
+      <div id="orders"></div>
+    </div>
+
+    <div id="p2" hidden>
+      <div class="card">
+        <b>Add item</b>
+        <label for="ac">Category</label><input id="ac" list="cats" placeholder="Choose or type a new category"><datalist id="cats"></datalist>
+        <div class="grid"><div><label for="an">Item name</label><input id="an" maxlength="120"></div><div><label for="ap">Price (KES)</label><input id="ap" type="number" min="0" step="any" placeholder="optional"></div></div>
+        <div class="row" style="margin-top:12px"><button class="b1" id="add">Add item</button></div>
+      </div>
+      <div id="prods"></div>
+    </div>
+
+    <div id="note" class="msg ok" hidden></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  var c=window.LEX_CONFIG||{}, sb=null;
+  if(window.supabase&&/^https:\/\/[^\s"]+\.supabase\.co/.test(c.url||'')&&c.key&&c.key.indexOf('PASTE')<0){ try{ sb=window.supabase.createClient(c.url,c.key); }catch(e){} }
+  if(!sb){ $('setup').hidden=false; return; }
+
+  var note=$('note'), nt;
+  function say(m,bad){ note.hidden=false; note.className='msg '+(bad?'err':'ok'); note.textContent=m; clearTimeout(nt); nt=setTimeout(function(){note.hidden=true;},3500); }
+  function wa(phone){ var d=String(phone||'').replace(/\D/g,''); if(d.charAt(0)==='0') d='254'+d.slice(1); return d; }
+
+  /* ---------- auth ---------- */
+  function show(which){ $('login').hidden=which!=='login'; $('app').hidden=which!=='app'; $('out').hidden=which!=='app'; }
+  function check(){
+    sb.auth.getSession().then(function(r){
+      if(!r.data||!r.data.session){ show('login'); return; }
+      sb.rpc('is_admin').then(function(a){
+        if(a.data===true){ show('app'); loadOrders(); loadProds(); }
+        else { show('login'); err('This account is not an admin.'); sb.auth.signOut(); }
+      });
+    });
+  }
+  function err(m){ var e=$('lerr'); e.hidden=!m; e.textContent=m||''; }
+  $('go').addEventListener('click',function(){
+    err(''); var em=$('em').value.trim(), pw=$('pw').value;
+    if(!em||!pw){ err('Enter your email and password.'); return; }
+    sb.auth.signInWithPassword({email:em,password:pw}).then(function(r){
+      if(r.error){ err('Login failed. Check your email and password.'); return; }
+      $('pw').value=''; check();
+    });
+  });
+  $('pw').addEventListener('keydown',function(e){ if(e.key==='Enter') $('go').click(); });
+  $('out').addEventListener('click',function(){ sb.auth.signOut().then(function(){ $('orders').innerHTML=''; $('prods').innerHTML=''; show('login'); }); });
+
+  /* ---------- tabs ---------- */
+  function tab(n){ $('p1').hidden=n!==1; $('p2').hidden=n!==2; $('t1').setAttribute('aria-pressed',n===1); $('t2').setAttribute('aria-pressed',n===2); }
+  $('t1').addEventListener('click',function(){tab(1);}); $('t2').addEventListener('click',function(){tab(2);});
+
+  /* ---------- orders ---------- */
+  var orders=[];
+  function loadOrders(){
+    sb.from('orders').select('*').order('created_at',{ascending:false}).limit(300).then(function(r){
+      if(r.error){ say('Could not load orders: '+r.error.message,true); return; }
+      orders=r.data||[]; drawOrders();
+    });
+  }
+  function drawOrders(){
+    var f=$('flt').value, list=orders.filter(function(o){return !f||o.status===f;});
+    var nn=orders.filter(function(o){return o.status==='new';}).length; $('newn').textContent=nn?'('+nn+' new)':'';
+    if(!list.length){ $('orders').innerHTML='<div class="card meta">No orders yet.</div>'; return; }
+    $('orders').innerHTML=list.map(function(o){
+      var items=(o.items||[]).map(function(i){return '<li>'+esc(i.qty)+' × '+esc(i.name)+'</li>';}).join('')||'<li>(no items listed)</li>';
+      var sts=['new','contacted','quoted','delivered','cancelled'].map(function(s){return '<option'+(s===o.status?' selected':'')+'>'+s+'</option>';}).join('');
+      var msg=encodeURIComponent('Hello '+o.name+', this is Lexizia Solutions regarding your '+(o.kind==='quote'?'quotation request':'order')+' '+(o.ref||'')+'.');
+      return '<div class="card"><div class="row" style="justify-content:space-between"><b>'+esc(o.name)+'</b><span><span class="badge '+esc(o.kind)+'">'+esc(o.kind)+'</span> <span class="badge">'+esc(o.status)+'</span></span></div>'+
+        '<div class="meta">'+esc(o.ref||'')+' · '+esc(new Date(o.created_at).toLocaleString('en-KE'))+'</div>'+
+        '<div style="margin-top:6px">'+(o.organisation?esc(o.organisation)+'<br>':'')+'📞 '+esc(o.phone)+(o.email?'<br>✉️ '+esc(o.email):'')+(o.location?'<br>📍 '+esc(o.location):'')+'</div>'+
+        '<ul class="items">'+items+'</ul>'+(o.notes?'<div class="meta">Notes: '+esc(o.notes)+'</div>':'')+
+        '<div class="row" style="margin-top:10px"><select data-id="'+o.id+'" data-a="st" style="width:auto">'+sts+'</select>'+
+        '<a class="b2" style="padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700;color:var(--navy)" target="_blank" rel="noopener" href="https://wa.me/'+wa(o.phone)+'?text='+msg+'">WhatsApp</a>'+
+        '<a class="b3" style="padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:700;color:var(--navy)" href="tel:'+esc(o.phone)+'">Call</a>'+
+        '<button class="bd" data-id="'+o.id+'" data-a="del">Delete</button></div></div>';
+    }).join('');
+  }
+  $('flt').addEventListener('change',drawOrders); $('ref').addEventListener('click',loadOrders);
+  $('orders').addEventListener('change',function(e){
+    var el=e.target; if(el.getAttribute('data-a')!=='st') return;
+    sb.from('orders').update({status:el.value}).eq('id',el.getAttribute('data-id')).then(function(r){
+      if(r.error){ say('Not saved: '+r.error.message,true); return; } say('Status updated'); loadOrders();
+    });
+  });
+  $('orders').addEventListener('click',function(e){
+    var el=e.target.closest('button'); if(!el||el.getAttribute('data-a')!=='del') return;
+    if(!confirm('Delete this order permanently?')) return;
+    sb.from('orders').delete().eq('id',el.getAttribute('data-id')).then(function(r){
+      if(r.error){ say('Not deleted: '+r.error.message,true); return; } say('Order deleted'); loadOrders();
+    });
+  });
+
+  /* ---------- catalogue ---------- */
+  var prods=[];
+  function loadProds(){
+    sb.from('products').select('*').order('sort').order('id').then(function(r){
+      if(r.error){ say('Could not load catalogue: '+r.error.message,true); return; }
+      prods=r.data||[]; drawProds();
+    });
+  }
+  function drawProds(){
+    var cats=[]; prods.forEach(function(p){ if(cats.indexOf(p.category)<0) cats.push(p.category); });
+    $('cats').innerHTML=cats.map(function(k){return '<option value="'+esc(k)+'">';}).join('');
+    $('prods').innerHTML=cats.map(function(k){
+      return '<h2>'+esc(k)+'</h2><div class="card">'+prods.filter(function(p){return p.category===k;}).map(function(p){
+        return '<div class="prow" data-id="'+p.id+'"><input data-f="name" value="'+esc(p.name)+'" maxlength="120" aria-label="Name"><input data-f="price" type="number" min="0" step="any" value="'+(p.price==null?'':esc(p.price))+'" placeholder="Price" aria-label="Price">'+
+          '<div class="row"><label style="margin:0;display:flex;gap:6px;align-items:center"><input data-f="active" type="checkbox" style="width:auto"'+(p.active?' checked':'')+'> Show on site</label>'+
+          '<button class="b1" data-a="save">Save</button><button class="bd" data-a="del">Delete</button></div></div>';
+      }).join('')+'</div>';
+    }).join('')||'<div class="card meta">No items yet. Add one above.</div>';
+  }
+  $('add').addEventListener('click',function(){
+    var cat=$('ac').value.trim(), name=$('an').value.trim(), pv=$('ap').value.trim();
+    if(!cat||!name){ say('Enter a category and an item name.',true); return; }
+    var sort=prods.reduce(function(m,p){return Math.max(m,p.sort||0);},0)+1;
+    sb.from('products').insert({category:cat,name:name,price:pv===''?null:Number(pv),sort:sort}).then(function(r){
+      if(r.error){ say('Not added: '+r.error.message,true); return; }
+      $('an').value=''; $('ap').value=''; say('Item added'); loadProds();
+    });
+  });
+  $('prods').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return; var row=b.closest('.prow'), id=row.getAttribute('data-id'), a=b.getAttribute('data-a');
+    if(a==='save'){
+      var name=row.querySelector('[data-f=name]').value.trim(), pv=row.querySelector('[data-f=price]').value.trim();
+      if(!name){ say('Name cannot be empty.',true); return; }
+      sb.from('products').update({name:name,price:pv===''?null:Number(pv),active:row.querySelector('[data-f=active]').checked}).eq('id',id).then(function(r){
+        if(r.error){ say('Not saved: '+r.error.message,true); return; } say('Saved'); loadProds();
+      });
+    } else if(a==='del'){
+      if(!confirm('Delete this item permanently?')) return;
+      sb.from('products').delete().eq('id',id).then(function(r){
+        if(r.error){ say('Not deleted: '+r.error.message,true); return; } say('Item deleted'); loadProds();
+      });
+    }
+  });
+
+  check();
+})();
+</script>
+</body>
+</html>

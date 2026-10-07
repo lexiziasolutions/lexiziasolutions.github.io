@@ -550,7 +550,7 @@
     </div>
     <div class="legal">
       <span>© <span id="y"></span> Lexizia Solutions Ltd. All rights reserved.</span>
-      <span>Registered in Kenya · Company No. PVT-DM1KB2V5</span>
+      <span>Registered in Kenya · Company No. PVT-DM1KB2V5 · <a href="admin.html" rel="nofollow" style="opacity:.55">Admin</a></span>
     </div>
   </div>
 </footer>
@@ -590,6 +590,8 @@
   <svg viewBox="0 0 32 32"><path d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 2.4a10.6 10.6 0 1 1-5.4 19.7l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 0 1 16 5.4zm-4 5.3c-.3 0-.7.1-1 .5-.4.4-1.300 1.300-1.300 3.100s1.300 3.600 1.500 3.800c.2.2 2.600 4.100 6.400 5.600 3.100 1.200 3.800 1 4.500.9.700-.1 2.200-.9 2.500-1.800.3-.9.300-1.600.2-1.800-.1-.2-.4-.3-.8-.5l-2.500-1.200c-.3-.1-.6-.2-.8.200-.3.400-.9 1.100-1.100 1.300-.2.200-.4.300-.7.100-.4-.2-1.500-.6-2.800-1.700-1-.9-1.700-2-1.900-2.400-.2-.4 0-.6.200-.8l.5-.6c.2-.2.200-.4.400-.6.100-.2.100-.4 0-.6l-1.100-2.700c-.3-.7-.6-.6-.8-.6z"/></svg>
 </a>
 
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
@@ -611,7 +613,16 @@
     "Printing & Branding":["Banners & signage","Branded T-shirts & caps","Calendars & diaries","ID cards & lanyards","Business cards & letterheads","Rubber stamps"],
     "Refreshments & Pantry":["Tea & coffee","Sugar & milk","Bottled water","Cups & kitchenware","Biscuits & snacks"]
   };
-  var cart={}, active=Object.keys(CAT)[0];
+  var cart={}, active=Object.keys(CAT)[0], PRICE={};
+  var sb=null; (function(){ var c=window.LEX_CONFIG||{}; if(window.supabase&&/^https:\/\/[^\s"]+\.supabase\.co/.test(c.url||'')&&c.key&&c.key.indexOf('PASTE')<0){ try{ sb=window.supabase.createClient(c.url,c.key); }catch(e){} } })();
+  function saveOrder(row){ if(!sb||!row) return; try{ sb.from('orders').insert(row).then(function(r){ if(r&&r.error) console.warn('Order not saved:',r.error.message); }); }catch(e){} }
+  function loadProducts(){ if(!sb) return;
+    sb.from('products').select('category,name,price').eq('active',true).order('sort').order('id').then(function(r){
+      if(!r||r.error||!r.data||!r.data.length) return;
+      var c={}; r.data.forEach(function(p){ (c[p.category]=c[p.category]||[]).push(p.name); if(p.price!=null) PRICE[p.name]=Number(p.price); });
+      CAT=c; active=Object.keys(CAT)[0]; drawTabs(); drawItems();
+    });
+  }
   function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
   function drawTabs(){
     document.getElementById('tabs').innerHTML=Object.keys(CAT).map(function(c){
@@ -620,7 +631,8 @@
   function drawItems(){
     document.getElementById('items').innerHTML=CAT[active].map(function(n){
       var q=cart[n]?cart[n].q:0;
-      return '<div class="item"><div><b>'+esc(n)+'</b><small>'+(q?q+' in your order list':'Price on request')+'</small></div>'+
+      var pr=PRICE[n]!=null?'KES '+PRICE[n].toLocaleString('en-KE')+' (indicative)':'Price on request';
+      return '<div class="item"><div><b>'+esc(n)+'</b><small>'+pr+(q?' · '+q+' in your order list':'')+'</small></div>'+
         '<button type="button" class="btn teal sm add" data-n="'+esc(n)+'">'+(q?'Add one more':'Add to list')+'</button></div>';}).join('');
   }
   function save(){ try{ localStorage.setItem('lex_cart',JSON.stringify(cart)); }catch(e){} }
@@ -691,7 +703,8 @@
     var d=new Date(), ref='LEX-'+String(d.getFullYear()).slice(2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+Math.floor(1000+Math.random()*9000);
     var text="ORDER REQUEST\nRef: "+ref+"\n\nName: "+v('dn')+"\nOrganisation: "+(v('do')||'-')+"\nPhone: "+v('dp')+"\nEmail: "+(v('de')||'-')+
       "\nDelivery location: "+v('dd')+"\n\nItems:\n"+keys.map(function(k){return '- '+cart[k].q+' x '+k;}).join('\n')+"\n\nNotes: "+(v('dm')||'-');
-    return {ref:ref,text:text,name:v('dn')};
+    var row={ref:ref,kind:'order',name:v('dn'),phone:v('dp'),organisation:v('do')||null,email:v('de')||null,location:v('dd'),notes:v('dm')||null,items:keys.map(function(k){return {name:k,qty:cart[k].q,category:cart[k].c};})};
+    return {ref:ref,text:text,name:v('dn'),row:row};
   }
   function sent(ref,how){
     var m=document.getElementById('dok');
@@ -699,14 +712,15 @@
   }
   document.getElementById('ordWa').addEventListener('click',function(){
     var o=buildOrder(); if(!o) return;
-    window.open("https://wa.me/254116400947?text="+encodeURIComponent(o.text),'_blank','noopener'); sent(o.ref,'WhatsApp');
+    saveOrder(o.row); window.open("https://wa.me/254116400947?text="+encodeURIComponent(o.text),'_blank','noopener'); sent(o.ref,'WhatsApp');
   });
   document.getElementById('ordMail').addEventListener('click',function(){
     var o=buildOrder(); if(!o) return;
-    location.href="mailto:lexiziacompanyltd@gmail.com?subject="+encodeURIComponent("Order request "+o.ref+" – "+o.name)+"&body="+encodeURIComponent(o.text); sent(o.ref,'your email app');
+    saveOrder(o.row); location.href="mailto:lexiziacompanyltd@gmail.com?subject="+encodeURIComponent("Order request "+o.ref+" – "+o.name)+"&body="+encodeURIComponent(o.text); sent(o.ref,'your email app');
   });
 
   load();
+  loadProducts();
   drawTabs(); drawItems(); drawCart();
 
   // quote form
@@ -714,16 +728,19 @@
     var v=function(id){return document.getElementById(id).value.trim();};
     var keys=Object.keys(cart);
     if(!v('n')||!v('p')||(!v('m')&&!keys.length)){ alert('Please fill in your name and phone, and add the items you need.'); return null; }
+    var d=new Date(), ref='LEX-'+String(d.getFullYear()).slice(2)+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'-'+Math.floor(1000+Math.random()*9000);
     var list=keys.length?keys.map(function(k){return '- '+cart[k].q+' x '+k+' ('+cart[k].c+')';}).join('\n'):'-';
-    return "QUOTATION REQUEST\n\nName: "+v('n')+"\nOrganisation: "+(v('o')||'-')+"\nPhone: "+v('p')+"\nEmail: "+(v('e')||'-')+
+    window.lastQuote={ref:ref,kind:'quote',name:v('n'),phone:v('p'),organisation:v('o')||null,email:v('e')||null,location:v('d')||null,
+      notes:('['+v('c')+'] '+v('m')).trim(),items:keys.map(function(k){return {name:k,qty:cart[k].q,category:cart[k].c};})};
+    return "QUOTATION REQUEST\nRef: "+ref+"\n\nName: "+v('n')+"\nOrganisation: "+(v('o')||'-')+"\nPhone: "+v('p')+"\nEmail: "+(v('e')||'-')+
       "\nCategory: "+v('c')+"\nDelivery location: "+(v('d')||'-')+"\n\nSelected items:\n"+list+"\n\nOther items & notes:\n"+(v('m')||'-');
   }
   document.getElementById('qf').addEventListener('submit',function(ev){
-    ev.preventDefault(); var t=build(); if(!t) return;
+    ev.preventDefault(); var t=build(); if(!t) return; saveOrder(window.lastQuote);
     location.href="mailto:lexiziacompanyltd@gmail.com?subject="+encodeURIComponent("Quotation request – "+document.getElementById('c').value)+"&body="+encodeURIComponent(t);
   });
   document.getElementById('wa-btn').addEventListener('click',function(){
-    var t=build(); if(!t) return;
+    var t=build(); if(!t) return; saveOrder(window.lastQuote);
     window.open("https://wa.me/254116400947?text="+encodeURIComponent(t),'_blank','noopener');
   });
 
