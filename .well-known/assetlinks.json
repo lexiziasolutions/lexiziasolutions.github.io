@@ -1,8 +1,26 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "ke.co.lexiziasolutions.admin",
-        "sha256_cert_fingerprints": ["1A:EF:6B:4D:BE:31:32:84:1C:0E:E4:53:C0:35:E3:42:4F:FE:1A:AE:C9:5A:4F:7E:CB:98:51:FA:6E:C8:B5:FB"]
-      }
-    }]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ke.co.lexiziasolutions.admin",
+      "sha256_cert_fingerprints": [
+        "1A:EF:6B:4D:BE:31:32:84:1C:0E:E4:53:C0:35:E3:42:4F:FE:1A:AE:C9:5A:4F:7E:CB:98:51:FA:6E:C8:B5:FB"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ke.co.lexiziasolutions.twa",
+      "sha256_cert_fingerprints": [
+        "F1:2F:8C:8F:13:4D:79:EA:CF:9E:9A:AD:17:32:D9:C8:A5:92:06:BF:B0:EF:6A:7A:F9:41:30:1A:32:3E:5A:2B"
+      ]
+    }
+  }
+]
