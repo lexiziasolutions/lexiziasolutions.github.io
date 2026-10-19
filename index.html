@@ -168,13 +168,39 @@
   .chip .ic{color:var(--teal)}
 
   /* catalogue + quote list */
-  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
-  .tab{border:1.5px solid var(--line);background:#fff;color:var(--navy);padding:9px 16px;border-radius:999px;font-family:inherit;font-weight:600;font-size:.9rem;cursor:pointer}
+  .cattools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .search{position:relative;flex:1 1 280px;max-width:440px;display:block}
+  .search .ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted);pointer-events:none}
+  .search input{width:100%;padding:13px 14px 13px 44px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-family:inherit;font-size:16px;color:var(--ink)}
+  .search input:focus{outline:0;border-color:var(--teal);box-shadow:0 0 0 3px rgba(15,157,138,.16)}
+  .count{color:var(--muted);font-size:.9rem;margin-left:auto}
+  .tabs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;margin:0 -2px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:#fff;color:var(--navy);padding:10px 16px;border-radius:999px;font-family:inherit;font-weight:600;font-size:.9rem;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+  .tab:hover{border-color:var(--teal)}
+  .tab .n{font-size:.76rem;font-weight:700;background:#eef2f8;color:var(--muted);border-radius:999px;padding:2px 8px}
   .tab[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
-  .items{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
-  .item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;justify-content:space-between}
-  .item b{color:var(--navy);font-size:.96rem;display:block}
-  .item small{color:var(--muted)}
+  .tab[aria-pressed="true"] .n{background:rgba(255,255,255,.18);color:#fff}
+  .items{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .item{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px;justify-content:space-between;transition:transform .18s,box-shadow .18s,border-color .18s}
+  .item:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:#cfe9e4}
+  .item.in{border-color:var(--teal);background:linear-gradient(180deg,#f3fbf9,#fff)}
+  .item .pic{width:46px;height:46px;border-radius:12px;background:#e9f8f4;color:var(--teal);display:grid;place-items:center;margin-bottom:14px}
+  .item .pic .ic{width:24px;height:24px}
+  .item b{color:var(--navy);font-size:1rem;line-height:1.3;display:block;margin-bottom:4px}
+  .item small{color:var(--muted);font-size:.86rem;display:block}
+  .item .cl{font-size:.72rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);margin-bottom:4px;display:block}
+  .item .add{width:100%;justify-content:center}
+  .qty{display:flex;align-items:center;justify-content:space-between;background:#e9f8f4;border-radius:12px;padding:4px}
+  .qty button{width:40px;height:40px;border-radius:9px;border:0;background:#fff;color:var(--navy);font-size:1.25rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(10,31,61,.14)}
+  .qty button:hover{background:#f5fffd}
+  .qty span{font-weight:800;color:var(--navy);font-size:.95rem}
+  .noitems{grid-column:1/-1;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:16px;padding:36px 20px;color:var(--muted)}
+  .noitems a{color:var(--teal);font-weight:700}
+  .catnote{margin-top:22px;color:var(--muted);font-size:.95rem}
+  .catnote a{color:var(--teal);font-weight:700}
+  @media(max-width:520px){.search{flex-basis:100%;max-width:none}.count{margin-left:0}.items{grid-template-columns:repeat(2,1fr);gap:12px}.item{padding:14px}.item .pic{width:40px;height:40px;margin-bottom:10px}}
+  @media(max-width:360px){.items{grid-template-columns:1fr}}
   .cartbox{background:#f0faf8;border:1px solid #bfe6df;border-radius:14px;padding:14px 16px;margin-bottom:16px}
   .cartbox h4{color:var(--navy);margin-bottom:6px}
   .cartrow{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed #cfe9e4;font-size:.93rem}
@@ -290,6 +316,7 @@
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
 </svg>
 
 <div class="topbar">
@@ -385,8 +412,13 @@
       <h2>Pick items, build your order</h2>
       <p class="lead">Choose a category, tap <b>Add to list</b> on what you need, then open your <b>Order list</b> to place an order, or request a written quotation below.</p>
     </div>
+    <div class="cattools rv">
+      <label class="search"><svg class="ic"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Search products, e.g. toner, chairs, gloves" aria-label="Search products" autocomplete="off"></label>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
     <div class="tabs" id="tabs" role="group" aria-label="Categories"></div>
     <div class="items" id="items"></div>
+    <p class="catnote">Can't find what you need? <a href="#quote">Send us your list</a> and we'll quote for it.</p>
   </div>
 </section>
 
@@ -624,16 +656,28 @@
     });
   }
   function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  var query='';
+  var ICONS=[['stationer','i-pen'],['ict','i-laptop'],['furnit','i-chair'],['uniform','i-shirt'],['ppe','i-shirt'],['clean','i-spray'],['hygiene','i-spray'],['hardware','i-tool'],['electric','i-tool'],['print','i-print'],['brand','i-print'],['refresh','i-cup'],['pantry','i-cup']];
+  function iconFor(c){ var s=c.toLowerCase(); for(var i=0;i<ICONS.length;i++){ if(s.indexOf(ICONS[i][0])>-1) return ICONS[i][1]; } return 'i-biz'; }
   function drawTabs(){
     document.getElementById('tabs').innerHTML=Object.keys(CAT).map(function(c){
-      return '<button type="button" class="tab" data-c="'+esc(c)+'" aria-pressed="'+(c===active)+'">'+esc(c)+'</button>';}).join('');
+      return '<button type="button" class="tab" data-c="'+esc(c)+'" aria-pressed="'+(!query&&c===active)+'">'+esc(c)+'<span class="n">'+CAT[c].length+'</span></button>';}).join('');
+  }
+  function itemHTML(n,c,showCat){
+    var q=cart[n]?cart[n].q:0;
+    var pr=PRICE[n]!=null?'KES '+PRICE[n].toLocaleString('en-KE')+' (indicative)':'Price on request';
+    return '<div class="item'+(q?' in':'')+'"><div><div class="pic"><svg class="ic" aria-hidden="true"><use href="#'+iconFor(c)+'"/></svg></div>'+
+      (showCat?'<span class="cl">'+esc(c)+'</span>':'')+'<b>'+esc(n)+'</b><small>'+pr+'</small></div>'+
+      (q?'<div class="qty"><button type="button" data-a="dec" data-n="'+esc(n)+'" aria-label="Fewer '+esc(n)+'">−</button><span aria-label="'+q+' in list">'+q+'</span><button type="button" data-a="inc" data-n="'+esc(n)+'" aria-label="More '+esc(n)+'">+</button></div>'
+        :'<button type="button" class="btn teal sm add" data-n="'+esc(n)+'" data-c="'+esc(c)+'">Add to list</button>')+'</div>';
   }
   function drawItems(){
-    document.getElementById('items').innerHTML=CAT[active].map(function(n){
-      var q=cart[n]?cart[n].q:0;
-      var pr=PRICE[n]!=null?'KES '+PRICE[n].toLocaleString('en-KE')+' (indicative)':'Price on request';
-      return '<div class="item"><div><b>'+esc(n)+'</b><small>'+pr+(q?' · '+q+' in your order list':'')+'</small></div>'+
-        '<button type="button" class="btn teal sm add" data-n="'+esc(n)+'">'+(q?'Add one more':'Add to list')+'</button></div>';}).join('');
+    var list=[], q=query.trim().toLowerCase();
+    if(q){ Object.keys(CAT).forEach(function(c){ CAT[c].forEach(function(n){ if(n.toLowerCase().indexOf(q)>-1||c.toLowerCase().indexOf(q)>-1) list.push([n,c]); }); }); }
+    else { (CAT[active]||[]).forEach(function(n){ list.push([n,active]); }); }
+    document.getElementById('count').textContent=list.length+(list.length===1?' item':' items')+(q?' found':'');
+    document.getElementById('items').innerHTML=list.length?list.map(function(p){return itemHTML(p[0],p[1],!!q);}).join(''):
+      '<div class="noitems">No items match “'+esc(query.trim())+'”. <a href="#quote">Send us your list</a> and we\'ll quote for it.</div>';
   }
   function save(){ try{ localStorage.setItem('lex_cart',JSON.stringify(cart)); }catch(e){} }
   function load(){ try{ var d=JSON.parse(localStorage.getItem('lex_cart')||'{}'); if(d&&typeof d==='object'){ Object.keys(d).forEach(function(k){ var q=parseInt(d[k]&&d[k].q,10); if(q>0) cart[k]={q:Math.min(q,9999),c:String(d[k].c||'Custom')}; }); } }catch(e){} }
@@ -654,11 +698,12 @@
   var tt; function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(function(){t.classList.remove('show');},1700); }
   function unesc(t){return t.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&amp;/g,'&');}
   document.getElementById('tabs').addEventListener('click',function(e){
-    var b=e.target.closest('.tab'); if(!b) return; active=unesc(b.getAttribute('data-c')); drawTabs(); drawItems();
+    var b=e.target.closest('.tab'); if(!b) return; active=unesc(b.getAttribute('data-c')); query=''; document.getElementById('q').value=''; drawTabs(); drawItems();
   });
+  document.getElementById('q').addEventListener('input',function(e){ query=e.target.value; drawTabs(); drawItems(); });
   document.getElementById('items').addEventListener('click',function(e){
-    var b=e.target.closest('.add'); if(!b) return; var n=b.getAttribute('data-n');
-    cart[n]=cart[n]||{q:0,c:active}; cart[n].q++; drawItems(); drawCart(); toast('Added: '+n);
+    var b=e.target.closest('.add'); if(!b) return; var n=b.getAttribute('data-n'), c=b.getAttribute('data-c')||active;
+    cart[n]=cart[n]||{q:0,c:c}; cart[n].q++; drawItems(); drawCart(); toast('Added: '+n);
   });
   function cartAction(e){
     var b=e.target.closest('button'); if(!b) return; var a=b.getAttribute('data-a'), n=b.getAttribute('data-n');
@@ -670,6 +715,7 @@
     else if(a==='del'){ delete cart[n]; }
     drawItems(); drawCart();
   }
+  document.getElementById('items').addEventListener('click',cartAction);
   document.getElementById('cartBox').addEventListener('click',cartAction);
   document.getElementById('dList').addEventListener('click',cartAction);
 
