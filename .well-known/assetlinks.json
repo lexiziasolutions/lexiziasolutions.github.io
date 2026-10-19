@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "ke.co.lexiziasolutions.admin",
+        "sha256_cert_fingerprints": ["1A:EF:6B:4D:BE:31:32:84:1C:0E:E4:53:C0:35:E3:42:4F:FE:1A:AE:C9:5A:4F:7E:CB:98:51:FA:6E:C8:B5:FB"]
+      }
+    }]
