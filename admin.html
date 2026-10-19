@@ -7,6 +7,8 @@
 <meta name="theme-color" content="#0a1f3d">
 <title>Admin | Lexizia Solutions Ltd</title>
 <link rel="icon" type="image/svg+xml" href="logo-mark.svg">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="manifest" href="admin.webmanifest">
 <style>
   :root{--navy:#0a1f3d;--teal:#0f9d8a;--gold:#f2b33d;--ink:#122033;--muted:#58657a;--bg:#f5f7fb;--line:#e2e8f1;--red:#c0392b}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -210,6 +212,9 @@
 
   check();
 })();
+</script>
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }
 </script>
 </body>
 </html>
