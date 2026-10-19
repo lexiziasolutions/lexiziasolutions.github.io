@@ -19,6 +19,7 @@
 
 <link rel="icon" type="image/svg+xml" href="logo-mark.svg">
 <link rel="apple-touch-icon" href="logo.png">
+<link rel="manifest" href="manifest.webmanifest">
 
 <script type="application/ld+json">
 {
@@ -796,6 +797,9 @@
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12});
     els.forEach(function(el,i){el.style.transitionDelay=(i%4)*70+'ms';io.observe(el);});
   } else { els.forEach(function(el){el.classList.add('in');}); }
+</script>
+<script>
+if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register("/sw.js").catch(function () {}); }); }
 </script>
 </body>
 </html>

@@ -1,0 +1,22 @@
+{
+  "name": "Lexizia Solutions Ltd",
+  "short_name": "Lexizia",
+  "description": "General supplies, ICT equipment, office furniture, uniforms, cleaning and hardware for institutions, businesses and government offices in Kenya. Request a quote today.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "en-KE",
+  "background_color": "#ffffff",
+  "theme_color": "#0a1f3d",
+  "categories": ["business", "shopping"],
+  "icons": [
+    { "src": "logo-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "screenshots": [
+    { "src": "og.png", "sizes": "1200x630", "type": "image/png", "form_factor": "wide", "label": "Lexizia Solutions Ltd" }
+  ]
+}
