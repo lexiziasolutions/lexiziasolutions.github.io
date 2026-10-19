@@ -2,7 +2,7 @@
 
 Official website for **Lexizia Solutions Ltd**, a registered Kenyan company based in Kitale, Trans Nzoia, supplying stationery, ICT equipment, office furniture, uniforms & PPE, cleaning and hygiene products, hardware and electrical goods to institutions, businesses and government offices.
 
-🌐 **Live site:** https://lexiziasolutions.github.io/
+🌐 **Live site:** https://lexiziasolutions.co.ke/
 
 ## Features
 
