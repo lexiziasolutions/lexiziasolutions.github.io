@@ -11,26 +11,34 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 - Product catalogue with category filters, plus an order cart (add, change quantity, remove, remove all, add your own items) that places orders via WhatsApp or email
 - Quotation request form that sends via **email** or **WhatsApp** (opens the user's own app so they can review before sending)
 - Floating WhatsApp chat button
-- SEO-ready: meta description, Open Graph tags and Schema.org `Organization` structured data
-- Accessible: skip link, focus styles, semantic HTML
-- Single static file – no build step, no dependencies
+- SEO-ready: meta description, Open Graph and Twitter tags, Schema.org `Organization`/`LocalBusiness` and `FAQPage` structured data, sitemap and robots.txt
+- Installable as an app (PWA) with offline fallback and home-screen shortcuts
+- Branded 404 page
+- Accessible: skip link, focus styles, semantic headings, `noscript` fallback
+- Static site – no build step
 
 ## Project structure
 
 ```
 .
-├── index.html       # the whole website (HTML, CSS, JavaScript)
-├── logo.svg         # main logo, colour, for white backgrounds
-├── logo-white.svg   # logo for dark backgrounds
-├── logo-square.svg  # square version for profile pictures
-├── logo-mark.svg    # "LX" icon, used as the browser icon
-├── logo.png         # 512px square logo (app icon / profile picture)
-├── og.png           # 1200x630 image shown when the link is shared
-├── admin.html       # admin login: orders + catalogue manager (not linked in the menu)
-├── config.js        # Supabase URL + public anon key
-├── setup.sql        # run once in Supabase to create tables and security rules
+├── index.html            # the whole website (HTML, CSS, JavaScript)
+├── 404.html              # branded "page not found" page
+├── logo.svg              # main logo, colour, for white backgrounds
+├── logo-mark.svg         # "LX" icon, used as the browser icon
+├── logo.png              # 512px square logo (app icon / profile picture)
+├── logo-192.png          # 192px app icon
+├── og.png                # 1200x630 image shown when the link is shared
+├── manifest.webmanifest  # app manifest for the public site
+├── admin.webmanifest     # app manifest for the admin app
+├── sw.js                 # service worker (offline fallback)
+├── admin.html            # admin login: orders + catalogue manager (not linked in the menu)
+├── config.js             # Supabase URL + public anon key
+├── setup.sql             # run once in Supabase to create tables and security rules
 ├── robots.txt
 ├── sitemap.xml
+├── CNAME                 # custom domain for GitHub Pages
+├── .nojekyll             # lets GitHub Pages serve the .well-known folder
+├── .well-known/          # assetlinks.json (Android app) and security.txt
 └── README.md
 ```
 
@@ -44,11 +52,19 @@ Official website for **Lexizia Solutions Ltd**, a registered Kenyan company base
 
 ## Deploy with GitHub Pages
 
-1. Push `index.html` to the `main` branch.
+1. Push your changes to the `main` branch.
 2. Go to **Settings → Pages**.
 3. Under **Build and deployment**, set **Source** to *Deploy from a branch*.
 4. Choose branch **main** and folder **/ (root)**, then click **Save**.
-5. After a minute or two the site is live at `https://lexiziasolutions.github.io/`.
+5. Under **Custom domain** use `lexiziasolutions.co.ke` and tick **Enforce HTTPS** once the certificate is ready.
+6. After a minute or two the site is live at `https://lexiziasolutions.co.ke/`.
+
+## Getting found in search
+
+- Google: add the site in [Search Console](https://search.google.com/search-console) and submit `sitemap.xml`.
+- Bing: add it in [Bing Webmaster Tools](https://www.bing.com/webmasters).
+- Brave Search keeps its own index and has no submission tool. Links from real pages (a Google Business Profile, Facebook/LinkedIn pages, business directories) are what help it discover the site.
+- After changing the page, update the date in `sitemap.xml` (`lastmod`).
 
 ## Customising
 

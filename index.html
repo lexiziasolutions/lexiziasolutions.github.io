@@ -23,7 +23,21 @@
 <link rel="icon" type="image/svg+xml" href="logo-mark.svg">
 <link rel="apple-touch-icon" href="logo.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {"@type":"Question","name":"Which areas do you deliver to?","acceptedAnswer":{"@type":"Answer","text":"We are based in Kitale and serve Trans Nzoia and neighbouring counties. We can also arrange delivery further afield. Tell us your location in your request and we will confirm."}},
+    {"@type":"Question","name":"How quickly can I get a quotation?","acceptedAnswer":{"@type":"Answer","text":"Send us your list with quantities and specifications, and we will prepare a written quotation as quickly as possible. Clearer specifications mean faster and more accurate quotes."}},
+    {"@type":"Question","name":"Do you issue LPO-based supplies and invoices?","acceptedAnswer":{"@type":"Answer","text":"Yes. We work with Local Purchase Orders and issue delivery notes and invoices for every order, suited for institutional accounting."}},
+    {"@type":"Question","name":"Can you supply items not on your list?","acceptedAnswer":{"@type":"Answer","text":"Absolutely. Our core lines are listed, but if you need something else we will source it from trusted suppliers and quote for it."}},
+    {"@type":"Question","name":"How can I verify your company?","acceptedAnswer":{"@type":"Answer","text":"Our company number is PVT-DM1KB2V5, registered under the Companies Act, 2015. We can share our Certificate of Incorporation and the official Registrar of Companies search on request."}}
+  ]
+}
+</script>
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
@@ -117,7 +131,7 @@
   .ticks .ic{color:var(--teal-2)}
 
   .qcard{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:28px;backdrop-filter:blur(6px);box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
-  .qcard h3{font-size:1.15rem;margin-bottom:4px}
+  .qcard .qh{font-size:1.15rem;font-weight:700;margin-bottom:4px}
   .qcard p{color:#aebfd8;font-size:.92rem;margin-bottom:18px}
   .qstep{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-top:1px solid rgba(255,255,255,.1)}
   .qstep b{width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:.9rem;flex:none}
@@ -297,6 +311,7 @@
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<noscript><p style="background:#f2b33d;color:#0a1f3d;padding:12px 16px;text-align:center;font-weight:600">The order list needs JavaScript. You can still reach us on <a href="tel:+254116400947" style="text-decoration:underline">+254 116 400 947</a>, WhatsApp or <a href="mailto:lexiziacompanyltd@gmail.com" style="text-decoration:underline">lexiziacompanyltd@gmail.com</a>.</p></noscript>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
@@ -371,7 +386,7 @@
       </div>
     </div>
     <aside class="qcard" aria-label="How to get a quote">
-      <h3>Get a quote in 3 steps</h3>
+      <p class="qh">Get a quote in 3 steps</p>
       <p>Simple, fast, no obligation.</p>
       <div class="qstep"><b>1</b><span>Send your list<small>Items, quantities and delivery location</small></span></div>
       <div class="qstep"><b>2</b><span>Receive a written quotation<small>Clear unit prices and terms</small></span></div>
@@ -661,7 +676,7 @@
       CAT=c; active=Object.keys(CAT)[0]; drawTabs(); drawItems();
     });
   }
-  function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function esc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
   var query='';
   var ICONS=[['stationer','i-pen'],['ict','i-laptop'],['furnit','i-chair'],['uniform','i-shirt'],['ppe','i-shirt'],['clean','i-spray'],['hygiene','i-spray'],['hardware','i-tool'],['electric','i-tool'],['print','i-print'],['brand','i-print'],['refresh','i-cup'],['pantry','i-cup']];
   function iconFor(c){ var s=c.toLowerCase(); for(var i=0;i<ICONS.length;i++){ if(s.indexOf(ICONS[i][0])>-1) return ICONS[i][1]; } return 'i-biz'; }
@@ -702,7 +717,7 @@
     save();
   }
   var tt; function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tt); tt=setTimeout(function(){t.classList.remove('show');},1700); }
-  function unesc(t){return t.replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&amp;/g,'&');}
+  function unesc(t){return t.replace(/&quot;/g,'"').replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&amp;/g,'&');}
   document.getElementById('tabs').addEventListener('click',function(e){
     var b=e.target.closest('.tab'); if(!b) return; active=unesc(b.getAttribute('data-c')); query=''; document.getElementById('q').value=''; drawTabs(); drawItems();
   });

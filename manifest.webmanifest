@@ -16,6 +16,10 @@
     { "src": "logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "logo-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ],
+  "shortcuts": [
+    { "name": "Request a quote", "short_name": "Quote", "url": "/?source=shortcut#quote", "icons": [{ "src": "logo-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Browse products", "short_name": "Products", "url": "/?source=shortcut#catalogue", "icons": [{ "src": "logo-192.png", "sizes": "192x192", "type": "image/png" }] }
+  ],
   "screenshots": [
     { "src": "og.png", "sizes": "1200x630", "type": "image/png", "form_factor": "wide", "label": "Lexizia Solutions Ltd" }
   ]
