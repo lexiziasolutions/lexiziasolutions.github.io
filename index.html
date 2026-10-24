@@ -644,7 +644,6 @@
 </a>
 
 <script src="config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
   document.getElementById('y').textContent = new Date().getFullYear();
 
@@ -667,8 +666,22 @@
     "Refreshments & Pantry":["Tea & coffee","Sugar & milk","Bottled water","Cups & kitchenware","Biscuits & snacks"]
   };
   var cart={}, active=Object.keys(CAT)[0], PRICE={};
-  var sb=null; (function(){ var c=window.LEX_CONFIG||{}; if(window.supabase&&/^https:\/\/[^\s"]+\.supabase\.co/.test(c.url||'')&&c.key&&c.key.indexOf('PASTE')<0){ try{ sb=window.supabase.createClient(c.url,c.key); }catch(e){} } })();
-  function saveOrder(row){ if(!sb||!row) return; try{ sb.from('orders').insert(row).then(function(r){ if(r&&r.error) console.warn('Order not saved:',r.error.message); }); }catch(e){} }
+  // The Supabase library loads in the background so it never delays the first paint.
+  // Orders placed before it is ready are queued and saved as soon as it is.
+  var sb=null, pending=[];
+  function initSb(){
+    var c=window.LEX_CONFIG||{};
+    if(window.supabase&&/^https:\/\/[^\s"]+\.supabase\.co/.test(c.url||'')&&c.key&&c.key.indexOf('PASTE')<0){ try{ sb=window.supabase.createClient(c.url,c.key); }catch(e){} }
+    var q=pending; pending=[]; if(sb){ q.forEach(saveOrder); loadProducts(); }
+  }
+  (function(){
+    var c=window.LEX_CONFIG||{}; if(!c.url) return;
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+    s.async=true; s.onload=initSb; s.onerror=function(){ pending=[]; };
+    document.head.appendChild(s);
+  })();
+  function saveOrder(row){ if(!row) return; if(!sb){ if(pending.length<5) pending.push(row); return; } try{ sb.from('orders').insert(row).then(function(r){ if(r&&r.error) console.warn('Order not saved:',r.error.message); }); }catch(e){} }
   function loadProducts(){ if(!sb) return;
     sb.from('products').select('category,name,price').eq('active',true).order('sort').order('id').then(function(r){
       if(!r||r.error||!r.data||!r.data.length) return;
@@ -787,7 +800,6 @@
   });
 
   load();
-  loadProducts();
   drawTabs(); drawItems(); drawCart();
 
   // quote form

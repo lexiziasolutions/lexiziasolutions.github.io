@@ -91,7 +91,7 @@ Company No. PVT-DM1KB2V5 · Registered under the Companies Act, 2015
 
 The site is static, so logins and data live in a free [Supabase](https://supabase.com) project.
 
-1. Create a Supabase project, then open **SQL Editor**, paste `setup.sql` (change the admin email in it) and run it.
+1. Create a Supabase project, then open **SQL Editor**, paste `setup.sql` and run it. Then run the one-line `insert into public.admins ...` shown at the top of that file with your own admin email (it is not stored in this public repo).
 2. **Authentication → Users → Add user**: create the admin with that same email and a strong password (tick *Auto Confirm User*).
 3. **Authentication → Sign In / Providers**: turn **off** "Allow new users to sign up".
 4. **Project Settings → API**: copy the *Project URL* and the **anon public** key into `config.js`. Never use the `service_role` key.

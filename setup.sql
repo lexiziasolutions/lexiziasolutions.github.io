@@ -1,9 +1,9 @@
 -- Lexizia Solutions: run this ONCE in Supabase -> SQL Editor -> New query -> Run
--- 1) Put YOUR admin email in the line marked  <<< CHANGE THIS
+-- 1) To add an admin, run this separately with YOUR email (kept out of this public file):
+--      insert into public.admins (email) values ('your-admin@email.com') on conflict do nothing;
+--    The admin must also be created under Authentication -> Users with the same email.
 
 create table if not exists public.admins (email text primary key);
-insert into public.admins (email) values ('phelinewanjala@gmail.com')   -- <<< CHANGE THIS
-on conflict do nothing;
 
 create table if not exists public.products (
   id bigint generated always as identity primary key,
